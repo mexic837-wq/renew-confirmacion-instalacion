@@ -121,8 +121,8 @@ const InstallationForm = () => {
 
       console.log('Enviando datos:', finalData);
 
-      // Webhook call
-      await fetch('/api/pdf_generator', {
+      // Llamada al Webhook
+      await fetch('https://n8n.milian-app.online/webhook/confirmacion-instalacion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalData)
