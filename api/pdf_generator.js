@@ -1,7 +1,7 @@
 /**
  * RENEW WATER - PDF Generator Service v4.5 (Vercel-Public Edition)
  * Estándar de ejecución: ES Modules (import/export)
- * Fuente de Datos: https://renew-confirmacion-instalacion.vercel.app/confirmaciondeordenv1.pdf
+ * Fuente de Datos: https://renew-confirmacion-instalacion.vercel.app/confirmaciondeordenv2.pdf
  */
 
 import { PDFDocument } from 'pdf-lib';
@@ -19,8 +19,8 @@ export default async function handler(req, res) {
     }
 
     // 2. Cargar Plantilla PDF desde la URL Pública de Vercel
-    // Importante: El archivo confirmaciondeordenv1.pdf debe vivir en la carpeta /public
-    const urlPlantilla = 'https://renew-confirmacion-instalacion.vercel.app/confirmaciondeordenv1.pdf';
+    // Importante: El archivo confirmaciondeordenv2.pdf debe vivir en la carpeta /public
+    const urlPlantilla = 'https://renew-confirmacion-instalacion.vercel.app/confirmaciondeordenv2.pdf';
     
     console.log(`Intentando descargar plantilla desde: ${urlPlantilla}`);
     const response = await fetch(urlPlantilla);

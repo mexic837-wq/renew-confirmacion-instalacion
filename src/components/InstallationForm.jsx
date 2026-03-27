@@ -99,7 +99,33 @@ const InstallationForm = () => {
     }));
   };
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 4));
+  const validateStep = () => {
+    if (step === 1) {
+      const { cliente, instalacion } = formData;
+      if (!cliente.comprador || !cliente.telefono || !cliente.direccion || !cliente.ciudad || !cliente.estado || !cliente.zip || !instalacion.instalador || !instalacion.representante) {
+        alert('Por favor complete todos los campos de Datos Generales.');
+        return false;
+      }
+    }
+    if (step === 3) {
+      const { preguntas, costos } = formData;
+      if (!preguntas.led_iniciales || !preguntas.lugar_iniciales || !preguntas.clima_iniciales) {
+        alert('Por favor complete todas las iniciales en la Lista de Verificación.');
+        return false;
+      }
+      if (costos.instalacion === '' || costos.millas === '' || costos.extra === '' || costos.otro === '') {
+        alert('Por favor complete todos los campos de Costos de Instalación (puede usar 0 si no aplica).');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    if (validateStep()) {
+      setStep(prev => Math.min(prev + 1, 4));
+    }
+  };
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const clearSignature = () => {
@@ -107,12 +133,27 @@ const InstallationForm = () => {
   };
 
   const handleSubmit = async () => {
+    if (sigCanvas.current.isEmpty()) {
+      alert('Por favor firme el documento antes de enviar.');
+      return;
+    }
     setLoading(true);
     try {
       // Get Signature as Base64
       const signature64 = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
+      
+      // Limpiamos los costos para asegurar que se envíen solo como números
+      const costosNumericos = {
+        instalacion: Number(formData.costos.instalacion) || 0,
+        millas: Number(formData.costos.millas) || 0,
+        extra: Number(formData.costos.extra) || 0,
+        otro: Number(formData.costos.otro) || 0,
+        total: Number(formData.costos.total) || 0
+      };
+
       const finalData = {
         ...formData,
+        costos: costosNumericos,
         firmas: {
           firma_comprador: signature64,
           fecha_firma: new Date().toLocaleDateString('es-ES')
@@ -243,9 +284,10 @@ const InstallationForm = () => {
                     <input 
                       type="text" 
                       placeholder="Nombre Completo"
-                      className="ios-input shadow-sm border border-gray-50"
+                      className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                       value={formData.cliente.comprador}
                       onChange={(e) => handleInputChange('cliente', 'comprador', e.target.value)}
+                      required
                     />
                   </div>
 
@@ -255,9 +297,10 @@ const InstallationForm = () => {
                       <input 
                         type="tel" 
                         placeholder="Ej: 555-0123"
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.cliente.telefono}
                         onChange={(e) => handleInputChange('cliente', 'telefono', e.target.value)}
+                        required
                       />
                     </div>
                     <div>
@@ -265,9 +308,10 @@ const InstallationForm = () => {
                       <input 
                         type="email" 
                         placeholder="correo@ejemplo.com"
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.cliente.email}
                         onChange={(e) => handleInputChange('cliente', 'email', e.target.value)}
+                        required
                       />
                     </div>
                   </div>
@@ -277,9 +321,10 @@ const InstallationForm = () => {
                     <input 
                       type="text" 
                       placeholder="Calle y Número"
-                      className="ios-input shadow-sm border border-gray-50"
+                      className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                       value={formData.cliente.direccion}
                       onChange={(e) => handleInputChange('cliente', 'direccion', e.target.value)}
+                      required
                     />
                   </div>
 
@@ -288,18 +333,20 @@ const InstallationForm = () => {
                       <label className="ios-label">Ciudad</label>
                       <input 
                         type="text" 
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.cliente.ciudad}
                         onChange={(e) => handleInputChange('cliente', 'ciudad', e.target.value)}
+                        required
                       />
                     </div>
                     <div>
                       <label className="ios-label">Estado</label>
                       <input 
                         type="text" 
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.cliente.estado}
                         onChange={(e) => handleInputChange('cliente', 'estado', e.target.value)}
+                        required
                       />
                     </div>
                     <div>
@@ -307,9 +354,10 @@ const InstallationForm = () => {
                       <input 
                         type="text" 
                         placeholder="C.P."
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.cliente.zip}
                         onChange={(e) => handleInputChange('cliente', 'zip', e.target.value)}
+                        required
                       />
                     </div>
                   </div>
@@ -321,18 +369,20 @@ const InstallationForm = () => {
                       <label className="ios-label">Instalador</label>
                       <input 
                         type="text" 
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.instalacion.instalador}
                         onChange={(e) => handleInputChange('instalacion', 'instalador', e.target.value)}
+                        required
                       />
                     </div>
                     <div>
                       <label className="ios-label">Representante</label>
                       <input 
                         type="text" 
-                        className="ios-input shadow-sm border border-gray-50"
+                        className="ios-input shadow-sm border border-gray-50 focus:border-renew-cyan"
                         value={formData.instalacion.representante}
                         onChange={(e) => handleInputChange('instalacion', 'representante', e.target.value)}
+                        required
                       />
                     </div>
                   </div>
@@ -449,6 +499,7 @@ const InstallationForm = () => {
                             className="bg-white px-3 py-2 rounded-xl text-center w-16 border-none text-xs font-bold shadow-sm focus:ring-2 focus:ring-renew-cyan outline-none placeholder:text-gray-300"
                             value={formData.preguntas[q.iniz]}
                             onChange={(e) => handleInputChange('preguntas', q.iniz, e.target.value.toUpperCase())}
+                            required
                           />
                         </div>
                       </div>
@@ -467,26 +518,28 @@ const InstallationForm = () => {
                       <div>
                         <label className="ios-label">Instalación</label>
                         <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold ml-1">$</span>
                           <input 
                             type="number" 
-                            className="ios-input pl-8 shadow-sm border border-gray-50"
+                            className="ios-input pl-12 shadow-sm border border-gray-50 focus:border-renew-cyan"
                             placeholder="0.00"
                             value={formData.costos.instalacion || ''}
                             onChange={(e) => handleInputChange('costos', 'instalacion', e.target.value)}
+                            required
                           />
                         </div>
                       </div>
                       <div>
                         <label className="ios-label">Millas</label>
                         <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold ml-1">$</span>
                           <input 
                             type="number" 
-                            className="ios-input pl-8 shadow-sm border border-gray-50"
+                            className="ios-input pl-12 shadow-sm border border-gray-50 focus:border-renew-cyan"
                             placeholder="0.00"
                             value={formData.costos.millas || ''}
                             onChange={(e) => handleInputChange('costos', 'millas', e.target.value)}
+                            required
                           />
                         </div>
                       </div>
@@ -496,26 +549,28 @@ const InstallationForm = () => {
                       <div>
                         <label className="ios-label">Trabajo Extra</label>
                         <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold ml-1">$</span>
                           <input 
                             type="number" 
-                            className="ios-input pl-8 shadow-sm border border-gray-50"
+                            className="ios-input pl-12 shadow-sm border border-gray-50 focus:border-renew-cyan"
                             placeholder="0.00"
                             value={formData.costos.extra || ''}
                             onChange={(e) => handleInputChange('costos', 'extra', e.target.value)}
+                            required
                           />
                         </div>
                       </div>
                       <div>
                         <label className="ios-label">Otro</label>
                         <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold ml-1">$</span>
                           <input 
                             type="number" 
-                            className="ios-input pl-8 shadow-sm border border-gray-50"
+                            className="ios-input pl-12 shadow-sm border border-gray-50 focus:border-renew-cyan"
                             placeholder="0.00"
                             value={formData.costos.otro || ''}
                             onChange={(e) => handleInputChange('costos', 'otro', e.target.value)}
+                            required
                           />
                         </div>
                       </div>
