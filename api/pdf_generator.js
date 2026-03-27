@@ -14,7 +14,7 @@ exports.handler = async (req, res) => {
 
     // 1. Cargar Plantilla (Ruta relativa a la raíz del proyecto)
     // En producción AntiGravity, asegúrate de que el PDF se suba junto al script.
-    const templatePath = path.join(__dirname, '../confirmaciondeordenv1.pdf');
+    const templatePath = path.join(__dirname, 'confirmaciondeordenv1.pdf');
     if (!fs.existsSync(templatePath)) {
       throw new Error(`No se encontró el archivo confirmaciondeordenv1.pdf en la ruta: ${templatePath}`);
     }
