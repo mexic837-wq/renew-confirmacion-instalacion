@@ -18,6 +18,7 @@ import {
   Brush
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 const InstallationForm = () => {
   const [step, setStep] = useState(1);
@@ -169,13 +170,11 @@ const InstallationForm = () => {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-ios-bg p-4 flex flex-col font-sans">
       <header className="mb-8 pt-4">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-10 h-10 bg-water-blue rounded-xl flex items-center justify-center shadow-md">
-            <Droplets className="text-white" size={24} />
-          </div>
+        <div className="flex items-center justify-center gap-4 mb-2">
+          <img src={logo} alt="Renew Water Logo" className="w-16 h-auto drop-shadow-sm" />
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">RENEW <span className="text-water-blue font-light">WATER</span></h1>
         </div>
-        <p className="text-center text-gray-500 font-medium text-sm">Installation Confirmation</p>
+        <p className="text-center text-gray-500 font-bold tracking-[0.1em] text-xs uppercase opacity-40">Installation Confirmation</p>
       </header>
 
       <div className="relative">
@@ -190,11 +189,11 @@ const InstallationForm = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex flex-col items-center justify-center text-center py-10"
             >
-              <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6">
+              <div className="w-20 h-20 bg-renew-green/10 text-renew-green rounded-full flex items-center justify-center mb-6">
                 <CheckCircle2 size={48} />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">¡Success!</h2>
-              <p className="text-gray-500 mb-8 px-4">The installation confirmation has been sent successfully.</p>
+              <p className="text-gray-500 mb-8 px-4 font-medium">The installation confirmation has been sent successfully.</p>
               <button 
                 onClick={() => window.location.reload()}
                 className="btn-primary w-full"
@@ -364,7 +363,7 @@ const InstallationForm = () => {
                         <label 
                           className={`flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-200 border-2 ${
                             formData.equipos[item.id] 
-                              ? 'bg-water-blue/5 border-water-blue ring-1 ring-water-blue/20' 
+                              ? 'bg-renew-green/5 border-renew-green ring-1 ring-renew-green/10' 
                               : 'bg-gray-50 border-transparent hover:bg-gray-100'
                           }`}
                         >
@@ -376,11 +375,11 @@ const InstallationForm = () => {
                               onChange={(e) => handleInputChange('equipos', item.id, e.target.checked)}
                             />
                             <div className={`w-6 h-6 rounded-full border-2 transition-all ${
-                              formData.equipos[item.id] ? 'bg-water-blue border-water-blue' : 'bg-white border-gray-300'
+                              formData.equipos[item.id] ? 'bg-renew-green border-renew-green' : 'bg-white border-gray-300'
                             } flex items-center justify-center mr-4`}>
                               {formData.equipos[item.id] && <CheckCircle2 size={16} className="text-white" />}
                             </div>
-                            <span className={`font-semibold ${formData.equipos[item.id] ? 'text-water-blue' : 'text-gray-600'}`}>
+                            <span className={`font-semibold ${formData.equipos[item.id] ? 'text-renew-green' : 'text-gray-600'}`}>
                               {item.label}
                             </span>
                           </div>
@@ -398,7 +397,7 @@ const InstallationForm = () => {
                               <input 
                                 type="text"
                                 placeholder={item.text ? "Specify other equipment..." : "Serial Number"}
-                                className="ios-input bg-white border border-water-blue/20 shadow-inner text-sm"
+                                className="ios-input bg-white border border-renew-green/20 shadow-inner text-sm focus:ring-renew-green"
                                 value={formData.equipos[item.serial || item.text]}
                                 onChange={(e) => handleInputChange('equipos', item.serial || item.text, e.target.value)}
                               />
@@ -522,9 +521,9 @@ const InstallationForm = () => {
                       </div>
                     </div>
 
-                    <div className="mt-6 p-4 bg-water-blue/5 rounded-2xl border-2 border-water-blue/20 flex items-center justify-between">
+                    <div className="mt-6 p-4 bg-renew-yellow/5 rounded-2xl border-2 border-renew-yellow/20 flex items-center justify-between">
                       <span className="font-bold text-gray-800">Total Installation Cost</span>
-                      <span className="text-2xl font-black text-water-blue">${formData.costos.total.toFixed(2)}</span>
+                      <span className="text-2xl font-black text-renew-yellow">${formData.costos.total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
