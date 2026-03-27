@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #F2F2F7;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #F2F2F7;
+}
+
+#root {
+  width: 100%;
+}
+
+.ios-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ios-input {
+  @apply w-full px-4 py-3 rounded-xl border-none bg-white focus:ring-2 focus:ring-water-blue outline-none transition-all duration-200 text-gray-800 placeholder-gray-400;
+}
+
+.ios-label {
+  @apply block text-sm font-semibold text-gray-600 mb-1 ml-1;
+}
+
+.btn-primary {
+  @apply px-6 py-3 bg-water-blue text-white rounded-2xl font-bold shadow-lg hover:brightness-105 active:scale-95 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white text-water-blue border border-water-blue/20 rounded-2xl font-bold hover:bg-gray-50 active:scale-95 transition-all duration-200;
+}
