@@ -1,22 +1,20 @@
-/**
- * RENEW WATER - PDF Generator Service v3.1
- * Plantilla: confirmaciondeordenv1.pdf
- * Author: Antigravity Backend Senior
- */
+import { PDFDocument } from 'pdf-lib';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const { PDFDocument } = require('pdf-lib');
-const fs = require('fs');
-const path = require('path');
+// Helper for ESM __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-exports.handler = async (req, res) => {
+export default async function handler(req, res) {
   try {
     const payload = req.body;
 
-    // 1. Cargar Plantilla (Ruta relativa a la raíz del proyecto)
-    // En producción AntiGravity, asegúrate de que el PDF se suba junto al script.
+    // 1. Cargar Plantilla (Local en la carpeta /api)
     const templatePath = path.join(__dirname, 'confirmaciondeordenv1.pdf');
     if (!fs.existsSync(templatePath)) {
-      throw new Error(`No se encontró el archivo confirmaciondeordenv1.pdf en la ruta: ${templatePath}`);
+      throw new Error(`No se encontró el archivo confirmaciondeordenv1.pdf en: ${templatePath}`);
     }
     
     const existingPdfBytes = fs.readFileSync(templatePath);
@@ -25,7 +23,7 @@ exports.handler = async (req, res) => {
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
 
-    // --- RELLENADO DE CAMPOS DE TEXTO (Mapping) ---
+    // --- 2. MAPEO DE CAMPOS DE TEXTO ---
     const textMappings = {
       'fecha_doc': payload.cliente.fecha_doc,
       'comprador': payload.cliente.comprador,
@@ -60,7 +58,7 @@ exports.handler = async (req, res) => {
       } catch (e) {}
     });
 
-    // --- LÓGICA DE CHECKBOXES FALSOS ('X') ---
+    // --- 3. LÓGICA DE CHECKBOXES FALSOS ('X') ---
     const checkboxFields = {
       'chk_municipal': payload.equipos.municipal,
       'chk_icemaker': payload.equipos.icemaker,
@@ -85,14 +83,13 @@ exports.handler = async (req, res) => {
       }
     });
 
-    // --- 5. INCRUSTACIÓN DE FIRMA DINÁMICA (Bounding Box) ---
+    // --- 4. INCRUSTACIÓN DE FIRMA DINÁMICA (Bounding Box) ---
     if (payload.firmas && payload.firmas.firma_comprador) {
         try {
             const base64Data = payload.firmas.firma_comprador.replace(/^data:image\/\w+;base64,/, "");
             const imageBuffer = Buffer.from(base64Data, 'base64');
             const signatureImage = await pdfDoc.embedPng(imageBuffer);
 
-            // Localizar el campo firma_comprador en el PDF
             const signatureField = form.getTextField('firma_comprador');
             const widgets = signatureField.acroField.getWidgets();
             
@@ -104,15 +101,14 @@ exports.handler = async (req, res) => {
                     width: sigRect.width,
                     height: sigRect.height,
                 });
-                signatureField.setText(''); // Limpiar el cursor/texto del campo area
+                signatureField.setText(''); 
             }
         } catch (err) {
             console.error('Error al incrustar la firma:', err);
         }
     }
 
-    // 6. Cierre y Respuesta
-    form.flatten(); // Bloquear edición
+    form.flatten();
     const pdfBytes = await pdfDoc.save();
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -122,4 +118,4 @@ exports.handler = async (req, res) => {
     console.error('[FATAL ERROR]:', error);
     return res.status(500).json({ status: 'error', message: error.message });
   }
-};
+}
